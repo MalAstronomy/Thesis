@@ -39,8 +39,8 @@ class data_classes:
         
         high= np.sort(self.feature)[-1]
 
-        cl = np.linspace(0,high,self.nclasses)
-        cl=[round(i,2) for i in cl]
+        cl = np.linspace(0,high,self.nclasses+1)
+        cl=[round(i,3) for i in cl]
         
         for i,c in enumerate(cl[1:]):
             i+=1
@@ -56,9 +56,9 @@ class data_classes:
             for ind,c in enumerate(cl[1:]):
                 ind+=1
                 if self.feature[i] > c1[ind-1] and self.feature[i] < cl[ind]:
-                     src = path.realpath(self.pic_path + self.picture_names[i])
-                     dst=  path.realpath(self.DCfolder+ feature+ '/'+ str(cl[ind-1])+ '_' + str(cl[ind])+ '/')
-                     shutil.copy(src,dst)
+                    src = path.realpath(self.pic_path + self.picture_names[i])
+                    dst=  path.realpath(self.DCfolder+ feature+ '/'+ str(cl[ind-1])+ '_' + str(cl[ind])+ '/')
+                    shutil.copy(src,dst)
     
         return high
 
