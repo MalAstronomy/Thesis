@@ -37,11 +37,6 @@ from plot_confusion_matrix.py import ConfusionMatrix
 
 
 
-nclasses, nepochs, batch_size = 5, 30, 3           #
-train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test= extract().handling_dataset(nepochs, batch_size) #, predict_iterator, steps_predict
-input_shape= (224,224,3)
-
-
 start=time.time()
 
 class networks:

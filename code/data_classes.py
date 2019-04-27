@@ -55,7 +55,7 @@ class data_classes:
         for i in np.range(self.N):
             for ind,c in enumerate(cl[1:]):
                 ind+=1
-                if self.feature[i] > c1[ind-1] and self.feature[i] < cl[ind]:
+                if self.feature[i] >= c1[ind-1] and self.feature[i] <= cl[ind]:
                     src = path.realpath(self.pic_path + self.picture_names[i])
                     dst=  path.realpath(self.DCfolder+ feature+ '/'+ str(cl[ind-1])+ '_' + str(cl[ind])+ '/')
                     shutil.copy(src,dst)

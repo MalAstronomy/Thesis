@@ -93,6 +93,8 @@ class All:
         
         high=self.making_data_classes() 
         self.feature_values= np.linspace(0,high,self.nclasses+1)[1:] 
+        self.feature_values=[round(i,3) for i in self.feature_values]
+        
 
         convertingTF(self.feature_values, self.DCfolder,self.TFRecord).conversion()   
         
@@ -101,7 +103,7 @@ class All:
         
         return train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test
     
-    def networkss(feature): 
+    def networkss(self,feature): 
         
         train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test =self.extracting_tfrecords()
         
@@ -115,21 +117,20 @@ class All:
         #trained_model= network.saved_model()
         #trained_model= network.fitting(trained_model)   #to resume fitting 
 
+        
+        return trained_model
+    
         #network.checks(trained_model)
         #network.predict(trained_model,model_name, pic_path= '')
         
-    
-        
-        
-        
-        
+     
     def ratio_records(self): #2
 
         redshift,feature,merger,picture_names=  self.Feature() 
         self.feat= data_classes(self.pic_path,redshift,feature,merger,picture_names,self.DCfolder).feature()    
         Ctfrecords(self.pic_path,feature,self.TFRecord).conversion()
             
-    def making_datasets(self): 
+    def making_datasets(self): #2
         
         Train_files= self.TFRecord+'Train/'
         Validation_files= self.TFRecord+'Validation/'
@@ -138,27 +139,65 @@ class All:
         Ctfextract(Train_files,Validation_files,Test_files, self.epochs,self.batch_size,self.nclasses)
         
         
-    def prediction_sample_space(pic_path): 
+    def predict(self,feature): 
         
-        #pick 100 random images
-    
-        images = os.listdir(pic_path)
+        #picking 100 random images 
+        images = os.listdir(self.pic_path)
         indices= np.random.randint(0,len(images),100)
-        indx=[]
-        picture_names=[]
+        
+        redshift,feature,merger,picture_names=Feature(feature)
+        cl=np.linspace(0,high,self.nclasses+1) #self.feature_values doesnt include 0
+        cl=[round(i,3) for i in cl]
             
-        for i in indices: 
-            indx.append(int(images[i].split('_')[1])) 
-            picture_names.append(images[i])
-            
-        return indx, picture_names
-        
-    #def mass_ratio(): 
-        
-    #def size_ratio(): 
+        merger_p=merger[indices]
+        picture_names_p=picture_names[indices]
         
         
-    #def ytrue(): 
+        ytrue=[]
+        for i in np.arange(len(merger_p)):
+            for ind,c in enumerate(cl[1:]):
+                ind+=1
+                if merger_p[i] >= c1[ind-1] and merger_p[i] <= cl[ind]:
+                    np.append(ytrue,c1[ind])
+                    
+
+        picture_array = np.zeros((len(picture_names_p), self.dims[0], self.dims[1], self.dims[2]), dtype=np.float32)
+        picture_name_tensor, picture= convertingTF().image_process()
+
+        for i,name in enumerate(picture_names_p):
+            picture_array[i] = sess.run(picture, feed_dict={picture_name_tensor: name})
+            picture_array[i] = np.array(picture_array[i], dtype=np.float32)
+            picture_array[i] /= 255
+            #if i%500==0: print(i)
+
+        print("Start")
+        predictions= model.predict(picture_array, verbose=1)
+        print(predictions)
+        print("End")
+        
+        ypred=[]
+        perfect_counter = 0
+        for i in range(len(picture_names_p)):
+            max1 = np.amax(predictions[i][:self.nclasses])
+            idx = np.where(predictions[i]==max1)[0][0]
+            np.append(ypred, cl[idx+1])
+           
+        return ytrue,ypred 
+    
+    
+    
+    def ConfusionMatrix(self): 
+        
+        ytrue,ypred=self.predict(feature) #array of true and predicted class values 
+        
+        # Plot non-normalized confusion matrix
+        plot_confusion_matrix(ytrue, ypred, classes=self.feature_values.astype(str), title='Confusion matrix, without normalization')
+
+        # Plot normalized confusion matrix
+        plot_confusion_matrix(ytrue, ypred, classes=self.feature_values.astype(str), normalize=True, title='Normalized confusion matrix')
+        
+        
+
         
     def transformer(): 
         #save transformer
@@ -166,21 +205,10 @@ class All:
     
     def ytrueT(): 
         return ytrueT
-    
-     
-    
 
-        
-    def train():
-        
-    def save_model(): 
-        
-    def predict(): 
-        return ypredT
-    
     def inverse_transform(): 
     
-    def confusion_matrix(): 
+
         
     
     
