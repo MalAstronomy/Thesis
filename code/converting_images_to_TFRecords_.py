@@ -18,13 +18,14 @@ sess = tf.Session()
 class converting_to_TFRecords: 
     
     
-    def __init__(self, feature_values, DCfolder,TFRecord,name=""):
+    def __init__(self, feature_values, DCfolder,TFRecord,feature,name=""):
         self.name = name
         self.feature_values=feature_values
         self.DCfolder=DCfolder
         self.TFRecord=TFRecord
+        self.feature=feature
         
-
+        
     
     def _bytes_feature(self,value):
         return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
@@ -49,13 +50,17 @@ class converting_to_TFRecords:
             
     def conversion(self): 
     
-        for iclas, clas in enumerate(os.listdir(self.DCfolder)): 
-            one_clas= self.DCfolder+clas+'/'
+        for iclas, clas in enumerate(os.listdir(self.DCfolder+self.feature)):
+            if clas=='.DS_Store':continue
+            one_clas= self.DCfolder+self.feature+'/'+clas+'/'
+            print('class',clas)
             class_value=float(clas.split('_')[-1])
                       
             pics = glob.glob(os.path.join(one_clas,"*.jpg"))
        
             #choosing files for Train Validation and Test 
+            
+            if len(pics)==0: continue #incase the class is empty
             
             valid_fraction = 0.15
             test_fraction = 0.15
@@ -67,7 +72,10 @@ class converting_to_TFRecords:
             train_pics = np.setdiff1d(not_valid_pics,test_pics)
             train_pics, valid_pics, test_pics = train_pics.tolist(), valid_pics.tolist(), test_pics.tolist()
             
-##############################################################################################################################   
+#            os.mkdir(self.TFRecord+'Train/')
+#            os.mkdir(self.TFRecord+'Test/')
+#            os.mkdir(self.TFRecord+'Validation/')
+##############################################################################################################################
 
             folder_name_train = self.TFRecord +'Train/'+str(class_value)+'.tfrecord'
 

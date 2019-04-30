@@ -25,7 +25,7 @@ sess = tf.Session()
 
 class converting_to_TFRecords: 
     
-    def __init__(self, pic_path='/Users/malavikavijayendravasist/Desktop/mt2/images_resized',feature= 'Size Ratio',feat,self.TFRecord, name=""):
+    def __init__(self, pic_path,feature,feat,TFRecord, name=""):
         self.name = name
         self.pic_path=pic_path
         self.feature=feature

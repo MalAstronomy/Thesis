@@ -75,8 +75,10 @@ class networks:
         
         f=self.feat.split(' ')[0]
         
-        self.name= f + '_' + self.model_name+ "_" + str(self.nepochs)+ "_" + str(int(time.time()))    
-        callbacks=[TensorBoard(log_dir=self.TBfolder+self.name), batch_size=self.batch_size, ModelCheckpoint(self.CPfolder + self.name+'_{epoch:02d}.h5',monitor='val_acc',verbose=1,period=1)]  #-{val_accuracy:.2f}       
+        self.name= f + '_' + self.model_name+ "_" + str(self.nepochs)+ "_" + str(int(time.time()))
+        print(self.name)
+        print(batch_size)
+        callbacks=[TensorBoard(log_dir=self.TBfolder+self.name), batch_size=self.batch_size, ModelCheckpoint(self.CPfolder + self.name+'_{epoch:02d}.h5',monitor='val_acc',verbose=1,period=1)]  #-{val_accuracy:.2f}
         
         model.fit_generator(generator=self.train_iterator,
                             validation_data=self.valid_iterator,

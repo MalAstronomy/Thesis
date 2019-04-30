@@ -6,21 +6,8 @@ Created on Thu Apr 25 03:37:49 2019
 @author: malavikavijayendravasist
 """
 
-def making_datasets():#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Apr  7 11:46:10 2019
 
-@author: malavikavijayendravasist
-"""
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Wed Feb 27 11:32:30 2019
-
-@author: malavikavijayendravasist
-"""
 import tensorflow as tf
 import os
 from tensorflow.python.keras import backend
@@ -53,14 +40,14 @@ class extracting_TFRecords:
             idx = param_names.index(param)
             return len(param_values[idx])
         
-        def transformed(): 
-            
-        
-        def get_indices(self): 
-            
-        def 
-            
-    
+#        def transformed():
+#
+#
+#        def get_indices(self):
+#
+#        def
+#
+
         def extract_tfrec(tfrecord):
         
             features = {'picture_raw': tf.FixedLenFeature((), tf.string), 

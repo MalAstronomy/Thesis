@@ -29,15 +29,12 @@ import h5py
 
 from data_classes import data_classes
 from converting_images_to_TFRecords_ import converting_to_TFRecords as convertingTF
-from tfrecords import converting_to_TFRecords as Ctfrecords
-from extracting_images_from_TFRecords_ import extracting_TFRecords as extractTF
-from extracting_ratio_records import  extracting_TFRecords as Ctfextract
-from networkss import networks
-from plot_confusion_matrix import ConfusionMatrix
- 
+#from tfrecords import converting_to_TFRecords as Ctfrecords
+#from extracting_images_from_TFRecords_ import extracting_TFRecords as extractTF
+#from extracting_ratio_records import  extracting_TFRecords as Ctfextract
+#from networkss import networks
+#from plot_confusion_matrix import ConfusionMatrix
 
-features=['Mass Ratio','Size Ratio']
-pic_path='/home/vasist/images/'
 
 sess = tensorflow.Session()
 
@@ -45,57 +42,64 @@ sess = tensorflow.Session()
 
 class All: 
     
-    def __init__(self, features,pic_path,self.feature_values,DCfolder,epochs,batch_size,nclasses,dims,TBfolder,name=""):
+    def __init__(self, feature=None,pic_path=None,feature_values=None,DCfolder=None,epochs=None,batch_size=None,nclasses=None,dims=None,TBfolder=None,name=""):
         self.name = name
-        self.features=['Mass Ratio','Size Ratio']
+        self.feature='Size Ratio' #'Mass Ratio',
         self.feature_values=[]
-        self.pic_path='/home/vasist/images/'
-        self.DCfolder='/home/vasist/data_classes/'
+        self.pic_path='/Users/malavikavijayendravasist/Desktop/mt2/handpicked_images/' #'/home/vasist/images/'
+        self.DCfolder='/Users/malavikavijayendravasist/Desktop/mt2/data_classes/data_classes_handpicked_size/'#'/home/vasist/data_classes/'
         #self.TFRecord='/home/vasist/TFRecords/data_classes/'
-        self.TFRecord='/home/vasist/TFRecords/ratio/'
+        self.TFRecord='/Users/malavikavijayendravasist/Desktop/mt2/TFRecords/trial/'#'/home/vasist/TFRecords/ratio/'
         self.feat=[]    # array of features of all the images in the same order as the images
-        self.epochs=epochs
-        self.batch_size=batch_size
-        self.nclasses=nclasses
+        self.epochs=5
+        self.batch_size=5
+        self.nclasses=10
         self.dims=[224,224,3]
-        self.TBfolder='/home/vasist/Tensorboard/data_classes/'
-        self.CPfolder='/home/vasist/Checkpoints/data_classes/'
-        self.Modelfolder='/home/vasist/Models/data_classes/'
-        self.model_name=model_name #resnet50/mnist
+        self.TBfolder='/Users/malavikavijayendravasist/Desktop/mt2/Tensorboard/trial/'#'/home/vasist/Tensorboard/data_classes/'
+        self.CPfolder='/Users/malavikavijayendravasist/Desktop/mt2/Checkpoints/trial/'#'/home/vasist/Checkpoints/data_classes/'
+        self.Modelfolder='/Users/malavikavijayendravasist/Desktop/mt2/Models/trial/'#'/home/vasist/Models/data_classes/'
+        self.model_name='mnist' #resnet50/mnist
         
-    def Feature(self,feature):
+    def Feature(self):
         
         images = os.listdir(self.pic_path)
-        indices= len(images)
+        images=np.asarray(images)
+        indices= np.random.choice(np.arange(len(images)),20) #len(images)
+        print(indices)
         
-        redshift=[]
-        merger=[]
-        angle=[]
-        picture_names=[]
-                
-        for i in indices: 
-            redshift.append(int(images[i].split('_')[1])) 
-            merger.append(int(images[i].split('_')[2])) 
-            angle.append(int(s.split('_')[3].split('.')[0]))
-            picture_names.append(images[i])
-            
-        return redshift,feature,merger,picture_names
+        redshift=np.ndarray([])
+        merger=np.ndarray([])
+        angle=np.ndarray([])
+        picture_names=np.ndarray([])
+
+#        redshift=[]
+#        merger=[]
+#        angle=[]
+#        picture_names=[]
+
+        for i in indices:
+ 
+            np.append(redshift,int(images[i].split('_')[1]))
+            np.append(merger,int(images[i].split('_')[2]))
+            np.append(angle,int(images[i].split('_')[3].split('.')[0]))
+            np.append(picture_names,images[i])
+
+        return redshift,merger,angle,picture_names
         
     def making_data_classes(self): #feature='Mass Ratio' #1
         
-        redshift,feature,merger,picture_names= self.Feature()
+        redshift,merger,picture_names= self.Feature()
             
-        making_classes= data_classes(self.pic_path,redshift,feature,merger,picture_names,self.DCfolder,self.nclasses)
+        making_classes= data_classes(self.pic_path,redshift,self.feature,merger,picture_names,self.DCfolder,self.nclasses)
         high=making_classes.making_classes()
         return high
         
-    def making_tfrecords(self,high):    #1
+    def making_tfrecords(self):    #1
         
         high=self.making_data_classes() 
         self.feature_values= np.linspace(0,high,self.nclasses+1)[1:] 
         self.feature_values=[round(i,3) for i in self.feature_values]
         
-
         convertingTF(self.feature_values, self.DCfolder,self.TFRecord).conversion()   
         
     def extracting_tfrecords(self): #1
@@ -103,11 +107,11 @@ class All:
         
         return train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test
     
-    def networkss(self,feature): 
+    def networkss(self): 
         
         train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test =self.extracting_tfrecords()
         
-        network= networks(self.nclasses,self.nepochs,self.batch_size,train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test, self.model_name, feature,self.TBfolder,self.CPfolder,self.Modelfolder, self.dims)
+        network= networks(self.nclasses,self.nepochs,self.batch_size,train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test, self.model_name, self.feature,self.TBfolder,self.CPfolder,self.Modelfolder, self.dims)
 
         #untrained_model= network.fitting_mnist()  #returns a compiled but untrained model 
         untrained_model= network.fitting_resnet50()
@@ -201,22 +205,23 @@ class All:
         
     def transformer(): 
         #save transformer
-        return transformer
+        pass
     
     def ytrueT(): 
-        return ytrueT
+        pass
 
     def inverse_transform(): 
-    
+        pass
 
-        
-    
-    
+
 if __name__ == '__main__':
+    
     All=All()
-    high=All.data_classes()
-    tfrecords(high)
-        
+    All.making_tfrecords()
+
+#    high=All.data_classes()
+#    tfrecords(high)
+
         
     
     
