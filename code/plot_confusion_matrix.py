@@ -66,9 +66,10 @@ class ConfusionMatrix:
                 title = 'Normalized confusion matrix'
             else:
                 title = 'Confusion matrix, without normalization'
-
+#        print('inside',y_true,y_pred,classes)
         # Compute confusion matrix
-        cm = confusion_matrix(y_true, y_pred)
+#        print(y_true, y_pred)
+        cm = confusion_matrix(y_true, y_pred,labels = y_true)
         # Only use the labels that appear in the data
         #classes = classes[unique_labels(y_true, y_pred)]
         if normalize:
