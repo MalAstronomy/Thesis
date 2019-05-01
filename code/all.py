@@ -40,14 +40,14 @@ sess = tensorflow.Session()
 
 #training in Titan- /home/vasist/code/
 
-class All: 
+class All:
     
     def __init__(self, feature=None,pic_path=None,feature_values=None,DCfolder=None,epochs=None,batch_size=None,nclasses=None,dims=None,TBfolder=None,name=""):
         self.name = name
         self.feature='Size Ratio' #'Mass Ratio',
         self.feature_values=[]
         self.pic_path='/Users/malavikavijayendravasist/Desktop/mt2/handpicked_images/' #'/home/vasist/images/'
-        self.DCfolder='/Users/malavikavijayendravasist/Desktop/mt2/data_classes/data_classes_handpicked_size/'#'/home/vasist/data_classes/'
+        self.DCfolder='/Users/malavikavijayendravasist/Desktop/mt2/data_classes/data_classes_trial/'#'/home/vasist/data_classes/'
         #self.TFRecord='/home/vasist/TFRecords/data_classes/'
         self.TFRecord='/Users/malavikavijayendravasist/Desktop/mt2/TFRecords/trial/'#'/home/vasist/TFRecords/ratio/'
         self.feat=[]    # array of features of all the images in the same order as the images
@@ -59,55 +59,56 @@ class All:
         self.CPfolder='/Users/malavikavijayendravasist/Desktop/mt2/Checkpoints/trial/'#'/home/vasist/Checkpoints/data_classes/'
         self.Modelfolder='/Users/malavikavijayendravasist/Desktop/mt2/Models/trial/'#'/home/vasist/Models/data_classes/'
         self.model_name='mnist' #resnet50/mnist
-        
+    
+    
     def Feature(self):
         
         images = os.listdir(self.pic_path)
         images=np.asarray(images)
-        indices= np.random.choice(np.arange(len(images)),20) #len(images)
-        print(indices)
         
-        redshift=np.ndarray([])
-        merger=np.ndarray([])
-        angle=np.ndarray([])
-        picture_names=np.ndarray([])
+        indices= np.random.choice(np.arange(len(images)),100) #len(images)
 
-#        redshift=[]
-#        merger=[]
-#        angle=[]
-#        picture_names=[]
-
+        redshift=[]
+        merger=[]
+        angle=[]
+        picture_names=[]
+        
         for i in indices:
- 
-            np.append(redshift,int(images[i].split('_')[1]))
-            np.append(merger,int(images[i].split('_')[2]))
-            np.append(angle,int(images[i].split('_')[3].split('.')[0]))
-            np.append(picture_names,images[i])
-
-        return redshift,merger,angle,picture_names
+            redshift.append(int(images[i].split('_')[1]))
+            merger.append(int(images[i].split('_')[2]))
+            angle.append(int(images[i].split('_')[3].split('.')[0]))
+            picture_names.append(images[i])
         
+        return redshift,merger,picture_names
+    
     def making_data_classes(self): #feature='Mass Ratio' #1
         
         redshift,merger,picture_names= self.Feature()
-            
+        
         making_classes= data_classes(self.pic_path,redshift,self.feature,merger,picture_names,self.DCfolder,self.nclasses)
         high=making_classes.making_classes()
-        return high
         
+        f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/high.hdf5','w')
+        f.create_dataset('high',data=high)
+    
+    
     def making_tfrecords(self):    #1
         
-        high=self.making_data_classes() 
-        self.feature_values= np.linspace(0,high,self.nclasses+1)[1:] 
-        self.feature_values=[round(i,3) for i in self.feature_values]
-        
-        convertingTF(self.feature_values, self.DCfolder,self.TFRecord).conversion()   
+        #self.high=self.making_data_classes()
+        f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/high.hdf5','r')
+        high=f['high'].value
+        self.feature_values= np.linspace(0,high,self.nclasses+1)[1:]
+        self.feature_values=np.asarray([round(i,3) for i in self.feature_values])
+        convertingTF(self.feature_values, self.DCfolder,self.TFRecord,self.feature).conversion()
+    
+    
         
     def extracting_tfrecords(self): #1
         train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test= extractTF(self.TFRecord,self.feature_values,self.nclasses,self.dims,self.batch_size,self.nepochs).handling_dataset()
         
         return train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test
     
-    def networkss(self): 
+    def networkss(self):
         
         train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test =self.extracting_tfrecords()
         
@@ -149,7 +150,7 @@ class All:
         images = os.listdir(self.pic_path)
         indices= np.random.randint(0,len(images),100)
         
-        redshift,feature,merger,picture_names=Feature(feature)
+        redshift,feature,merger,picture_names=self.Feature(feature)
         cl=np.linspace(0,high,self.nclasses+1) #self.feature_values doesnt include 0
         cl=[round(i,3) for i in cl]
             

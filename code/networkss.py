@@ -28,7 +28,7 @@ from keras.metrics import top_k_categorical_accuracy
 import time
 import numpy as np
 from sklearn.metrics import confusion_matrix
-from plot_confusion_matrix.py import ConfusionMatrix 
+from plot_confusion_matrix import ConfusionMatrix
 
 
 #from keras.initializers import glorot_uniform
@@ -77,8 +77,15 @@ class networks:
         
         self.name= f + '_' + self.model_name+ "_" + str(self.nepochs)+ "_" + str(int(time.time()))
         print(self.name)
-        print(batch_size)
-        callbacks=[TensorBoard(log_dir=self.TBfolder+self.name), batch_size=self.batch_size, ModelCheckpoint(self.CPfolder + self.name+'_{epoch:02d}.h5',monitor='val_acc',verbose=1,period=1)]  #-{val_accuracy:.2f}
+        
+        l=self.nepochs
+        c=0
+        while l>0:
+            l//=10
+            c+=1
+        a="_{epoch:0"+str(c)+"d}.h5"
+        
+        callbacks=[TensorBoard(log_dir=self.TBfolder+self.name, batch_size=self.batch_size), ModelCheckpoint(self.CPfolder + self.name + a,monitor='val_acc',verbose=1,period=1)]  #-{val_accuracy:.2f}
         
         model.fit_generator(generator=self.train_iterator,
                             validation_data=self.valid_iterator,
@@ -90,6 +97,7 @@ class networks:
                             workers=0)
 
         model.save(self.Modelfolder + self.name + '.hdf5')
+        return self.name
         
     def checks(self,model): 
         
@@ -137,7 +145,7 @@ class networks:
 
     def fitting_resnet50(self):
 
-         def resnet50():   
+        def resnet50():
             model_input = layers.Input(shape=self.dims)
             model = ResNet50(input_tensor=model_input, include_top=True,weights='imagenet')
             last_layer = model.get_layer('avg_pool').output
