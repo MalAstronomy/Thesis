@@ -6,14 +6,14 @@ Created on Tue Apr 23 23:16:42 2019
 @author: malavikavijayendravasist
 """
 import tensorflow
-from tensorflow.python.keras import layers 
+from tensorflow.python.keras import layers
 from tensorflow.python.keras.losses import categorical_crossentropy
 from tensorflow.python.keras.callbacks import TensorBoard
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.models import Model
 from tensorflow.python.keras import backend
 from tensorflow.python.keras.callbacks import ModelCheckpoint
-from tensorflow.keras.metrics import top_k_categorical_accuracy 
+from tensorflow.keras.metrics import top_k_categorical_accuracy
 from tensorflow.keras.models import load_model
 
 from keras.utils import CustomObjectScope
@@ -30,10 +30,10 @@ import h5py
 from data_classes import data_classes
 from converting_images_to_TFRecords_ import converting_to_TFRecords as convertingTF
 #from tfrecords import converting_to_TFRecords as Ctfrecords
-#from extracting_images_from_TFRecords_ import extracting_TFRecords as extractTF
+from extracting_images_from_TFRecords_ import extracting_TFRecords as extractTF
 #from extracting_ratio_records import  extracting_TFRecords as Ctfextract
-#from networkss import networks
-#from plot_confusion_matrix import ConfusionMatrix
+from networkss import networks
+from plot_confusion_matrix import ConfusionMatrix
 
 
 sess = tensorflow.Session()
