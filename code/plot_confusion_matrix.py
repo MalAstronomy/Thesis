@@ -69,7 +69,8 @@ class ConfusionMatrix:
 #        print('inside',y_true,y_pred,classes)
         # Compute confusion matrix
 #        print(y_true, y_pred)
-        cm = confusion_matrix(y_true, y_pred,labels = y_true)
+        y_labels=np.arange(len(y_true))
+        cm = confusion_matrix(y_true, y_pred,labels = y_labels)
         # Only use the labels that appear in the data
         #classes = classes[unique_labels(y_true, y_pred)]
         if normalize:
@@ -78,7 +79,7 @@ class ConfusionMatrix:
         else:
             print('Confusion matrix, without normalization')
 
-        print(cm)
+#         print(cm)
 
         fig, ax = plt.subplots()
         im = ax.imshow(cm, interpolation='nearest', cmap=cmap)

@@ -220,7 +220,7 @@ class All:
         f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/high.hdf5','r')
         high=f['high'].value
         f.close()
-        cl=np.linspace(0,high,10+1) #self.feature_values doesnt include 0
+        cl=np.linspace(0,high,self.nclasses+1) #self.feature_values doesnt include 0
         cl=[round(i,3) for i in cl]
         return cl
 
