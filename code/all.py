@@ -46,18 +46,18 @@ class All:
         self.name = name
         self.feature='Size Ratio' #'Mass Ratio',
         self.feature_values=[]
-        self.pic_path= '/home/vasist/images/images_resized/' #'/Users/malavikavijayendravasist/Desktop/mt2/handpicked_images/'
-        self.DCfolder='/home/vasist/data_classes/' # /Users/malavikavijayendravasist/Desktop/mt2/data_classes/data_classes_trial/'
+        self.pic_path= '/Users/malavikavijayendravasist/Desktop/mt2/paraview/images' #'/home/vasist/images/images_resized/'
+        self.DCfolder= '/Users/malavikavijayendravasist/Desktop/mt2/paraview/data_classes_trial/' #'/home/vasist/data_classes/'
         #self.TFRecord='/home/vasist/TFRecords/data_classes/'
-        self.TFRecord='/home/vasist/TFRecords/ratio/' #'/Users/malavikavijayendravasist/Desktop/mt2/TFRecords/trial/'
+        self.TFRecord='/Users/malavikavijayendravasist/Desktop/mt2/TFRecords/paraview/' #'/home/vasist/TFRecords/ratio/'
         self.feat=[]    # array of features of all the images in the same order as the images
         self.nepochs=5
         self.batch_size=5
-        self.nclasses=10
+        self.nclasses=4
         self.dims=[224,224,3]
-        self.TBfolder='/home/vasist/Tensorboard/data_classes/' #'/Users/malavikavijayendravasist/Desktop/mt2/Tensorboard/trial/'
-        self.CPfolder='/home/vasist/Checkpoints/data_classes/' #'/Users/malavikavijayendravasist/Desktop/mt2/Checkpoints/trial/'
-        self.Modelfolder= '/home/vasist/Models/data_classes/' #'/Users/malavikavijayendravasist/Desktop/mt2/Models/trial/'
+        self.TBfolder=' /Users/malavikavijayendravasist/Desktop/mt2/Tensorboard/paraview/' #/home/vasist/Tensorboard/data_classes/
+        self.CPfolder='/Users/malavikavijayendravasist/Desktop/mt2/Checkpoints/paraview/' #' /home/vasist/Checkpoints/data_classes/'
+        self.Modelfolder= '/Users/malavikavijayendravasist/Desktop/mt2/Models/paraview/' # /home/vasist/Models/data_classes/'
         self.network_name='mnist' # resnet50/mnist
     
     
