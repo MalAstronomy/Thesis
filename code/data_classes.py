@@ -24,15 +24,16 @@ class data_classes:
         self.N=len(merger) #no of images
         self.DCfolder=DCfolder
         self.nclasses=nclasses
-
+ 
     
     def feat(self):
         #feat holds the ratio values of all the images in the images folder in the same order as their names.
         feat=[]
         for i in np.arange(self.N):
-            #f= h5py.File('home/vasist/mergers_identified/mergers_'+str(self.redshift[i])+'.hdf5', 'r')
-            f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/mergers_identified/mergers_'+str(self.redshift[i])+'.hdf5', 'r')
+            f= h5py.File('/home/vasist/mergers_identified/mergers_'+str(self.redshift[i])+'.hdf5', 'r')
+            #f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/mergers_identified/mergers_'+str(self.redshift[i])+'.hdf5', 'r')
             feat=np.append(feat,f.get(self.feature).value[self.merger[i]])
+        #print(feat) 
         return feat
             
     def making_folders(self):
@@ -40,8 +41,17 @@ class data_classes:
         #low= np.sort(feat)[0]
 #        print(self.feature)
 #        print(self.DCfolder+ self.feature+'/')
-        os.mkdir(self.DCfolder+ self.feature+'/')
+       
+        if os.path.exists(self.DCfolder+self.feature): 
+            shutil.rmtree(self.DCfolder+self.feature) 
+
+        if os.path.exists(self.DCfolder+self.feature+'_'+str(self.nclasses)+'_'+str(self.N)): 
+            shutil.rmtree(self.DCfolder+self.feature+'_'+str(self.nclasses)+'_'+str(self.N))
+                
         
+        os.mkdir(self.DCfolder+ self.feature+'_'+str(self.nclasses)+'_'+str(self.N)+'/')
+        #os.mkdir(self.DCfolder+ self.feature+'/')
+
         high= np.sort(self.feat())[-1]
 
         cl = np.linspace(0,high,self.nclasses+1)
@@ -49,8 +59,8 @@ class data_classes:
         
         for i,c in enumerate(cl[1:]):
             i+=1
-            os.mkdir(self.DCfolder+ self.feature+ '/'+ str(cl[i-1])+ '_' + str(cl[i]))
-
+            #os.mkdir(self.DCfolder+ self.feature+ '/'+ str(cl[i-1])+ '_' + str(cl[i]))
+            os.mkdir(self.DCfolder+ self.feature+ '_'+str(self.nclasses)+'_'+str(self.N)+'/'+ str(cl[i-1])+ '_' + str(cl[i]))
         return high,cl
 
     def making_classes(self):
@@ -60,9 +70,10 @@ class data_classes:
         for i in np.arange(self.N):
             for ind,c in enumerate(cl[1:]):
                 ind+=1
-                if self.feat()[i] >= cl[ind-1] and self.feat()[i] <= cl[ind]:
+                if self.feat()[i] >= cl[ind-1] and self.feat()[i] < cl[ind]:
                     src = path.realpath(self.pic_path + self.picture_names[i])
-                    dst=  path.realpath(self.DCfolder+ self.feature+ '/'+ str(cl[ind-1])+ '_' + str(cl[ind])+ '/')
+                    #dst=  path.realpath(self.DCfolder+ self.feature+ '/'+ str(cl[ind-1])+ '_' + str(cl[ind])+ '/')
+                    dst=  path.realpath(self.DCfolder+ self.feature+'_'+str(self.nclasses)+'_'+str(self.N)+'/'+ str(cl[ind-1])+ '_' + str(cl[ind])+ '/')
                     shutil.copy(src,dst)
     
         return high

@@ -18,7 +18,7 @@ from tensorflow.python.keras import layers
 from tensorflow.python.keras.losses import categorical_crossentropy
 from tensorflow.python.keras.callbacks import TensorBoard
 from tensorflow.keras.applications.resnet50 import ResNet50
-from tensorflow.keras.models import Model
+from tensorflow.keras.models import Model,Sequential
 from tensorflow.python.keras import backend
 from tensorflow.keras.models import load_model
 from keras.utils import CustomObjectScope
@@ -89,7 +89,7 @@ class networks:
         a="_{epoch:0"+str(c)+"d}.h5"
         
         callbacks=[TensorBoard(log_dir=self.TBfolder+self.name, batch_size=self.batch_size), ModelCheckpoint(self.CPfolder + self.name + a,monitor='val_acc',verbose=1,period=1)]  #-{val_accuracy:.2f}
-        print('validation steps ', self.steps_per_epoch_valid)
+        
         model.fit_generator(generator=self.train_iterator,
                             validation_data=self.valid_iterator,
                             steps_per_epoch=self.steps_per_epoch_train,
@@ -163,6 +163,25 @@ class networks:
             return custom_resnet_model
             
         return self.compiling(resnet50())
+
+
+    def fitting_myModel(self): 
+        
+        def myModel(): 
+            
+            #add model layers
+            model = Sequential()
+
+            model.add(layers.Conv2D(64, kernel_size=(3,3), activation='relu', input_shape=self.dims))
+            model.add(layers.Conv2D(32, kernel_size=(3,3), activation= 'relu'))
+            model.add(layers.Flatten())
+            model.add(layers.Dense(self.nclasses, activation= 'softmax'))
+
+            return model
+        
+        return self.compiling(myModel())
+
+
         
     def saved_model(self): 
 

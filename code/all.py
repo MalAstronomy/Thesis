@@ -19,6 +19,9 @@ from tensorflow.keras.models import load_model
 from keras.utils import CustomObjectScope
 from sklearn.metrics import confusion_matrix
 
+
+
+
 import time
 import numpy as np
 import os
@@ -33,6 +36,7 @@ from converting_images_to_TFRecords_ import converting_to_TFRecords as convertin
 from extracting_images_from_TFRecords_ import extracting_TFRecords as extractTF
 #from extracting_ratio_records import  extracting_TFRecords as Ctfextract
 from networkss import networks
+#from networkss_1 import networks
 from plot_confusion_matrix import ConfusionMatrix
 
 
@@ -46,19 +50,22 @@ class All:
         self.name = name
         self.feature='Size Ratio' #'Mass Ratio',
         self.feature_values=[]
-        self.pic_path= '/home/vasist/images/images_resized/' #'/Users/malavikavijayendravasist/Desktop/mt2/handpicked_images/'
-        self.DCfolder='/home/vasist/data_classes/' # /Users/malavikavijayendravasist/Desktop/mt2/data_classes/data_classes_trial/'
+        self.pic_path= '/home/vasist/images_paraview/' #'/Users/malavikavijayendravasist/Desktop/mt2/handpicked_images/'
+        self.DCfolder='/home/vasist/paraview/' # /Users/malavikavijayendravasist/Desktop/mt2/data_classes/data_classes_trial/'
         #self.TFRecord='/home/vasist/TFRecords/data_classes/'
-        self.TFRecord='/home/vasist/TFRecords/ratio/' #'/Users/malavikavijayendravasist/Desktop/mt2/TFRecords/trial/'
+        self.TFRecord='/home/vasist/TFRecords/paraview/' #'/Users/malavikavijayendravasist/Desktop/mt2/TFRecords/trial/'
         self.feat=[]    # array of features of all the images in the same order as the images
-        self.nepochs=5
-        self.batch_size=5
-        self.nclasses=10
+        self.nepochs=100
+        self.batch_size=3  
+        self.nclasses=4
         self.dims=[224,224,3]
-        self.TBfolder='/home/vasist/Tensorboard/data_classes/' #'/Users/malavikavijayendravasist/Desktop/mt2/Tensorboard/trial/'
-        self.CPfolder='/home/vasist/Checkpoints/data_classes/' #'/Users/malavikavijayendravasist/Desktop/mt2/Checkpoints/trial/'
-        self.Modelfolder= '/home/vasist/Models/data_classes/' #'/Users/malavikavijayendravasist/Desktop/mt2/Models/trial/'
-        self.network_name='mnist' # resnet50/mnist
+        self.TBfolder='/home/vasist/Tensorboard/paraview/' #'/Users/malavikavijayendravasist/Desktop/mt2/Tensorboard/trial/'
+        self.CPfolder='/home/vasist/Checkpoints/paraview/' #'/Users/malavikavijayendravasist/Desktop/mt2/Checkpoints/trial/'
+        self.Modelfolder= '/home/vasist/Models/paraview/' #'/Users/malavikavijayendravasist/Desktop/mt2/Models/trial/'
+        self.network_name='mnist' # resnet50/mnist/myModel 
+        #self.network_list= [mnist,resnet50,myModel]
+        #self.network_num= 2
+        self.N=0
     
     
     def Feature(self):
@@ -66,30 +73,33 @@ class All:
         images = os.listdir(self.pic_path)
         images=np.asarray(images)
         
-        indices= np.random.choice(np.arange(len(images)),100) #len(images)
-        
-        
+        #indices= np.random.choice(np.arange(len(images)),100) #len(images)
+        indices=np.arange(len(images)) 
+
         redshift=[]
         merger=[]
         angle=[]
         picture_names=[]
         
         for i in indices:
-            redshift.append(int(images[i].split('_')[1]))
-            merger.append(int(images[i].split('_')[2]))
-            angle.append(int(images[i].split('_')[3].split('.')[0]))
-            picture_names.append(images[i])
+            if images[i].endswith('.jpg'): 
+                redshift.append(int(images[i].split('_')[1]))
+                merger.append(int(images[i].split('_')[2]))
+                angle.append(int(images[i].split('_')[3].split('.')[0]))
+                picture_names.append(images[i])
         
         return redshift,merger,picture_names
     
     def making_data_classes(self): #feature='Mass Ratio' #1
         
         redshift,merger,picture_names= self.Feature()
+        self.N=len(picture_names)
         
         making_classes= data_classes(self.pic_path,redshift,self.feature,merger,picture_names,self.DCfolder,self.nclasses)
         high=making_classes.making_classes()
         
-        f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/high.hdf5','w')
+        #f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/high.hdf5','w')
+        f=h5py.File('/home/vasist/dir/high.hdf5','w')
         f.create_dataset('high',data=high)
         f.close()
     
@@ -97,12 +107,12 @@ class All:
     def making_tfrecords(self):    #1
         
         #self.high=self.making_data_classes()
-        f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/high.hdf5','r')
+        f=h5py.File('/home/vasist/dir/high.hdf5','r')
         high=f['high'].value
         f.close()
         self.feature_values= np.linspace(0,high,self.nclasses+1)[1:]
         self.feature_values=np.asarray([round(i,3) for i in self.feature_values])
-        convertingTF(self.feature_values, self.DCfolder,self.TFRecord,self.feature).conversion()
+        convertingTF(self.feature_values, self.DCfolder,self.TFRecord,self.feature,self.nclasses,self.N).conversion()
     
     
     
@@ -116,13 +126,14 @@ class All:
         
         train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test =self.extracting_tfrecords()
         
-        network= networks(self.nclasses,self.nepochs,self.batch_size,train_iterator, valid_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test, self.network_name, self.feature,self.TBfolder,self.CPfolder,self.Modelfolder, self.dims)
+        network= networks(self.nclasses,self.nepochs,self.batch_size,train_iterator, train_iterator, test_iterator, steps_per_epoch_train, steps_per_epoch_valid, steps_test, self.network_name, self.feature,self.TBfolder,self.CPfolder,self.Modelfolder, self.dims)
         
-        #untrained_model= network.fitting_mnist()  #returns a compiled but untrained model
-        untrained_model= network.fitting_resnet50()
+        untrained_model= network.fitting_mnist()  #returns a compiled but untrained model
+        #untrained_model= network.fitting_resnet50()
+        #untrained_model=network.fitting_myModel()
         model_name=network.fitting(untrained_model) #the model is saved here
         
-        f= h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/model_name.hdf5','w')
+        f= h5py.File('/home/vasist/dir/model_name.hdf5','w')
         f.create_dataset('model_name',data=model_name)
         f.close()
     
@@ -130,7 +141,7 @@ class All:
     
     def saved_model(self):
         
-        f= h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/model_name.hdf5','r')
+        f= h5py.File('/home/vasist/dir/model_name.hdf5','r')
         model_name= f['model_name'].value
         f.close()
         #         print(model_name)
@@ -178,7 +189,7 @@ class All:
         
         
         picture_array = np.zeros((len(picture_names_p), self.dims[0], self.dims[1], self.dims[2]), dtype=np.float32)
-        picture_name_tensor, picture= convertingTF(self.feature_values, self.DCfolder,self.TFRecord,self.feature).image_process()
+        picture_name_tensor, picture= convertingTF(self.feature_values, self.DCfolder,self.TFRecord,self.feature,self.nclasses,self.N).image_process()
         
         for i,name in enumerate(picture_names_p):
             Name=self.pic_path+name
@@ -208,7 +219,7 @@ class All:
         print(ypred)
 
 
-        f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/CM.hdf5','w')
+        f=h5py.File('/home/vasist/dir/CM.hdf5','w')
         s1=f.create_dataset('ytrue',data=ytrue)
         s2=f.create_dataset('ypred',data=ypred)
         f.close()
@@ -217,7 +228,7 @@ class All:
     
     def cl(self):
         
-        f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/high.hdf5','r')
+        f=h5py.File('/home/vasist/dir/high.hdf5','r')
         high=f['high'].value
         f.close()
         cl=np.linspace(0,high,self.nclasses+1) #self.feature_values doesnt include 0
@@ -238,7 +249,7 @@ class All:
 
     def ConfusionMatrix(self):
         #array of true and predicted class values
-        f=h5py.File('/Users/malavikavijayendravasist/Desktop/mt2/CM.hdf5','r')
+        f=h5py.File('/home/vasist/dir/CM.hdf5','r')
         ytrue=f['ytrue'].value
         ypred=f['ypred'].value
         f.close()
@@ -277,7 +288,13 @@ if __name__ == '__main__':
     a5=All.predict
     a6=All.ConfusionMatrix
 
-
+    a1()
+    a2()
+    a3()
+    a4()
+    a5()
+    a6()
+    
         
     
     

@@ -18,12 +18,14 @@ sess = tf.Session()
 class converting_to_TFRecords: 
     
     
-    def __init__(self, feature_values, DCfolder,TFRecord,feature,name=""):
+    def __init__(self, feature_values, DCfolder,TFRecord,feature,nclasses,N,name=""):
         self.name = name
         self.feature_values=feature_values
         self.DCfolder=DCfolder
         self.TFRecord=TFRecord
         self.feature=feature
+        self.N=N
+        self.nclasses=nclasses
         
         
     
@@ -50,9 +52,11 @@ class converting_to_TFRecords:
             
     def conversion(self): 
     
-        for iclas, clas in enumerate(os.listdir(self.DCfolder+self.feature)):
+        #for iclas, clas in enumerate(os.listdir(self.DCfolder+self.feature)):
+        for iclas, clas in enumerate(os.listdir(self.DCfolder+self.feature+'_'+str(self.nclasses)+'_'+str(self.N))):
             if clas=='.DS_Store':continue
-            one_clas= self.DCfolder+self.feature+'/'+clas+'/'
+            #one_clas= self.DCfolder+self.feature+'/'+clas+'/'
+            one_clas= self.DCfolder+self.feature+'_'+str(self.nclasses)+'_'+str(self.N)+'/'+clas+'/'
             print('class',clas)
             class_value=float(clas.split('_')[-1])
                       
