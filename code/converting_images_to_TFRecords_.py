@@ -20,15 +20,19 @@ class converting_to_TFRecords:
     
     def __init__(self, feature_values, DCfolder,TFRecord,feature,nclasses,N,name=""):
         self.name = name
-        self.feature_values=feature_values
+        self.feature_values= feature_values
         self.DCfolder=DCfolder
         self.TFRecord=TFRecord
         self.feature=feature
+<<<<<<< HEAD
         self.N=N
         self.nclasses=nclasses
         
         
     
+=======
+
+>>>>>>> fb567ce14c1566d5a173201358a38037def124f9
     def _bytes_feature(self,value):
         return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
     

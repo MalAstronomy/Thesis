@@ -21,8 +21,13 @@ from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.models import Model
 from tensorflow.python.keras import backend
 from tensorflow.keras.models import load_model
-from keras.utils import CustomObjectScope
 from tensorflow.python.keras import optimizers
+from keras.utils import CustomObjectScope
+<<<<<<< HEAD
+from tensorflow.python.keras import optimizers
+=======
+
+>>>>>>> fb567ce14c1566d5a173201358a38037def124f9
 from tensorflow.python.keras.callbacks import ModelCheckpoint
 from keras.metrics import top_k_categorical_accuracy
 
@@ -66,8 +71,13 @@ class networks:
     
     def compiling(self, model):
         
+<<<<<<< HEAD
         sgd=optimizers.SGD(lr=0.01,decay=1e-6,momentum=0.9,nesterov=True)
         model.compile(loss=categorical_crossentropy,optimizer=sgd,metrics=['accuracy'])
+=======
+        sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        model.compile(loss='categorical_crossentropy', optimizer=sgd,metrics=['accuracy'])
+>>>>>>> fb567ce14c1566d5a173201358a38037def124f9
         #model.compile(optimizer='adam', loss=categorical_crossentropy, metrics=['accuracy'])
         #model.compile(optimizer='adam', loss=categorical_crossentropy, metrics=[self.top_2_categorical_accuracy]) 
         #kCA- K.mean(K.equal(K.argmax(y_true, axis=-1), K.argmax(y_pred, axis=-1)))         

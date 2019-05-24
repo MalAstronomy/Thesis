@@ -50,6 +50,7 @@ class All:
         self.name = name
         self.feature='Size Ratio' #'Mass Ratio',
         self.feature_values=[]
+<<<<<<< HEAD
         self.pic_path= '/home/vasist/images_paraview/' #'/Users/malavikavijayendravasist/Desktop/mt2/handpicked_images/'
         self.DCfolder='/home/vasist/paraview/' # /Users/malavikavijayendravasist/Desktop/mt2/data_classes/data_classes_trial/'
         #self.TFRecord='/home/vasist/TFRecords/data_classes/'
@@ -66,6 +67,21 @@ class All:
         #self.network_list= [mnist,resnet50,myModel]
         #self.network_num= 2
         self.N=0
+=======
+        self.pic_path= '/Users/malavikavijayendravasist/Desktop/mt2/paraview/images' #'/home/vasist/images/images_resized/'
+        self.DCfolder= '/Users/malavikavijayendravasist/Desktop/mt2/paraview/data_classes_trial/' #'/home/vasist/data_classes/'
+        #self.TFRecord='/home/vasist/TFRecords/data_classes/'
+        self.TFRecord='/Users/malavikavijayendravasist/Desktop/mt2/TFRecords/paraview/' #'/home/vasist/TFRecords/ratio/'
+        self.feat=[]    # array of features of all the images in the same order as the images
+        self.nepochs=5
+        self.batch_size=5
+        self.nclasses=4
+        self.dims=[224,224,3]
+        self.TBfolder=' /Users/malavikavijayendravasist/Desktop/mt2/Tensorboard/paraview/' #/home/vasist/Tensorboard/data_classes/
+        self.CPfolder='/Users/malavikavijayendravasist/Desktop/mt2/Checkpoints/paraview/' #' /home/vasist/Checkpoints/data_classes/'
+        self.Modelfolder= '/Users/malavikavijayendravasist/Desktop/mt2/Models/paraview/' # /home/vasist/Models/data_classes/'
+        self.network_name='mnist' # resnet50/mnist
+>>>>>>> fb567ce14c1566d5a173201358a38037def124f9
     
     
     def Feature(self):
